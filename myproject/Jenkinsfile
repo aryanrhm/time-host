@@ -20,7 +20,7 @@ pipeline {
                 }
             }
             steps {
-                sh 'pwd; ls '
+                sh 'cd myproject'
                 sh 'pip install -r requirements.txt'
                 sh 'python3 manage.py test'
             }
