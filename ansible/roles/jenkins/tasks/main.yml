@@ -1,0 +1,50 @@
+---
+# tasks file for jenkins
+
+- name: Import Jenkins key from url
+  apt_key:
+    state: present
+    url: https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
+    keyring: /usr/share/keyrings/jenkins.gpg
+
+- name: Download Long Term Jenkins release
+  apt_repository:
+    repo: "deb [signed-by=/usr/share/keyrings/jenkins.gpg] https://pkg.jenkins.io/debian-stable binary/"
+    filename: /etc/apt/sources.list.d/jenkins.list
+
+- name: apt update
+  apt:
+    name: '*'
+    state: latest
+
+- name: Install Java
+  apt:
+    name: openjdk-11-jre
+    state: present
+
+- name: Install Jenkins
+  apt:
+    name: jenkins
+    state: latest
+
+- name: daemon-reload to pick up config changes
+  systemd:
+    daemon_reload: yes
+
+- name: adding jenkins user to group docker
+  user:
+    name: jenkins
+    groups: docker
+    append: yes
+
+
+- name: Start jenkins
+  systemd:
+    name: jenkins
+    state: started
+    enabled: true
+
+- name: Pause for 1 minute to start Jenkins again
+  ansible.builtin.pause:
+    minutes: 1
+

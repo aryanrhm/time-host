@@ -1,0 +1,12 @@
+- name: Install and Configure Jenkins
+  remote_user: ubuntu
+  become_user: root 
+  become: yes
+  hosts: jenkins
+  vars_files:
+    - ./secrets.yaml
+  roles:
+    # - docker
+    #- git
+    #- jenkins
+    - jcasc

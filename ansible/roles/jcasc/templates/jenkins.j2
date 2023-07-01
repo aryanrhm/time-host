@@ -1,0 +1,70 @@
+jenkins:
+  systemMessage: "Jenkins configured automatically by Jenkins Configuration as Code plugin"
+  securityRealm:
+    local:
+      allowsSignup: false
+      enableCaptcha: false
+      users:
+      - id: "aryan"
+        name: "Aryan Rahimi"
+        properties:
+        - "apiToken"
+        - preferredProvider:
+            providerId: "default"
+credentials:
+  system:
+    domainCredentials:
+      - credentials:
+        - usernamePassword:
+            id: "docker-hub-token"
+            password: "{{ DOCKER_HUB_TOKEN }}"
+            scope: GLOBAL
+            username: "{{ DOCKER_HUB_USER }}"
+            
+
+tool:
+  dockerTool:
+    installations:
+    - home: "/usr/bin/docker"
+      name: "default"
+  git:
+    installations:
+    - home: "git"
+      name: "default"
+
+unclassified:
+  pollSCM:
+    pollingThreadCount: 10
+
+jobs:
+  - script: >
+      pipelineJob('time-host-pipeline') {
+
+        def repo = 'https://github.com/aryanrhm/time-host'          
+        def sshRepo = 'git@github.com:aryanrhm/time-host.git'      
+
+        description("Pipeline for time_host django app")
+        keepDependencies(false)
+
+        properties{
+          githubProjectUrl (repo)
+          rebuild {
+            autoRebuild(false)
+          }
+        }
+
+        definition {
+          cpsScm {
+            scm {
+              git {
+                remote { url(repo) }
+                branches('master')
+                scriptPath('myproject/Jenkinsfile')
+                extensions { }
+              }
+            }
+          }
+        }
+      }
+
+

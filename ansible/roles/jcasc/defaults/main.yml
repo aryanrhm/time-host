@@ -1,0 +1,30 @@
+---
+# defaults file for jcasc
+plugins1:  
+  - mailer
+  - credentials
+  - ssh-credentials
+  - cloudbees-folder
+  - antisamy-markup-formatter
+  - build-timeout
+  - credentials-binding
+  - timestamper
+  - ws-cleanup
+  - workflow-aggregator
+  - github-branch-source
+
+plugins2:
+  - pipeline-github-lib
+  - pipeline-stage-view
+  - git
+  - ssh-slaves
+  - ldap
+  - pam-auth
+  - matrix-auth
+  - email-ext
+  - nodejs
+  - docker-plugin
+  - docker-workflow
+  - docker-build-publish
+  - job-dsl
+  - slack

@@ -1,0 +1,41 @@
+---
+# tasks file for docker
+- name: configure / Update apt packages
+  apt:
+    name: '*'
+    state: latest
+
+- name: Install prerequisite
+  apt:
+    pkg:
+    - apt-transport-https 
+    - ca-certificates 
+    - curl
+    - software-properties-common
+
+- name: Import Docker key from url
+  apt_key:
+    state: present
+    url: https://download.docker.com/linux/ubuntu/gpg
+
+- name: Add the Docker repository to APT sources
+  apt_repository:
+    repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu jammy stable"
+    filename: /etc/apt/sources.list.d/docker.list
+
+- name: Update apt packages
+  apt:
+    name: '*'
+    state: latest
+
+- name: Install docker
+  apt:
+    name: ['docker-ce', 'docker-ce-cli', 'containerd.io']
+    state: latest
+
+
+- name: Start docker
+  ansible.builtin.systemd:
+    name: docker
+    state: started
+    enabled: true

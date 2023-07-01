@@ -1,0 +1,43 @@
+---
+- name: Download jenkins cli
+  get_url:
+    url: http://127.0.0.1:8080/jnlpJars/jenkins-cli.jar
+    dest: ~/
+
+#- name: Install Jenkins Configure as Code Plugin
+#  shell:
+#    cmd: JENKINS_PASS=$(cat /var/lib/jenkins/secrets/initialAdminPassword) && java -jar ~/jenkins-cli.jar -s http://127.0.0.1:8080/ -auth admin:$JENKINS_PASS install-plugin configuration-as-code -deploy -restart
+      
+#- name: Pause for 1 minutes to start Jenkins again
+#  pause:
+#    minutes: 1
+
+#- name: Install Jenkins Suggested Plugins 1
+#  shell:
+#    cmd: JENKINS_PASS=$(cat /var/lib/jenkins/secrets/initialAdminPassword) && java -jar ~/jenkins-cli.jar -s http://127.0.0.1:8080/ -auth admin:$JENKINS_PASS install-plugin {{ plugins1 | join(' ') }} -deploy -restart
+
+#- name: Pause for 1 minutes to start Jenkins again
+#  pause:
+#    minutes: 1
+
+#- name: Install Jenkins Suggested Plugins 2
+#  shell:
+#    cmd: JENKINS_PASS=$(cat /var/lib/jenkins/secrets/initialAdminPassword) && java -jar ~/jenkins-cli.jar -s http://127.0.0.1:8080/ -auth admin:$JENKINS_PASS install-plugin {{ plugins2 | join(' ') }} -deploy -restart
+
+#- name: Restart jenkins
+#  systemd:
+#    name: jenkins
+#    state: restarted
+
+- name: Template jenkins.yaml file for Configuration as Code
+  ansible.builtin.template:
+    src: ./jenkins.j2
+    dest: /var/lib/jenkins/jenkins.yaml
+    owner: jenkins
+    group: jenkins
+    mode: '0644'
+
+- name: Restart jenkins
+  ansible.builtin.systemd:
+    name: jenkins
+    state: restarted
