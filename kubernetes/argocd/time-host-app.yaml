@@ -1,0 +1,39 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: time-host
+  namespace: argocd
+  annotations:
+    argocd-image-updater.argoproj.io/image-list: myalias=registry-1.docker.io/aryanrhm/time_host
+
+    argocd-image-updater.argoproj.io/myalias.helm.image-name: image.repository
+    argocd-image-updater.argoproj.io/myalias.helm.image-tag: image.tag
+
+    argocd-image-updater.argoproj.io/myalias.pull-secret: pullsecret:argocd/docker-hub-secret
+    argocd-image-updater.argoproj.io/myalias.update-strategy: latest
+    argocd-image-updater.argoproj.io/write-back-method: git:secret:argocd/git-secret
+    argocd-image-updater.argoproj.io/git-branch: main 
+    argocd-image-updater.argoproj.io/myalias.force-update: "true"
+
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+  
+  labels:
+    name: time-host
+
+
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/aryanrhm/time-host
+    targetRevision: HEAD
+    path: kubernetes/base-chart
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: time-host
+  syncPolicy:
+    syncOptions:
+      - Replace=true
+    automated:
+      prune: True
+      selfHeal: false
