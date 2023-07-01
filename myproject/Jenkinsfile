@@ -20,11 +20,10 @@ pipeline {
                 }
             }
             steps {
-                sh 'pwd'
-                sh 'cd ./myproject/'
-                sh 'pwd'
+                dir('myproject') {
                 sh 'pip install -r requirements.txt'
                 sh 'python3 manage.py test'
+                }
             }
        }
         stage('Build & Push') {
