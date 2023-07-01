@@ -2,6 +2,7 @@
 This repository creates a simple Django app that responds to an HTTP GET request and returns:
 - Timestamp
 - Hostname
+
 Then with the help of Docker, Jenkins, Helm Chart, and ArgoCD Image Updater creates a CICD pipeline on a Kubernetes cluster which is deployed with the use of Kind cluster. At the end there would be an application in time-host namespace with its deployment, service, and ingress installed.
 
 >Notes: 
