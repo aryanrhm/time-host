@@ -1,0 +1,16 @@
+# .gitignore file
+
+# Ignore Python virtual environment
+myenv/
+.myenv/
+
+# Django #
+*.log
+*.pot
+*.pyc
+__pycache__
+db.sqlite3
+media
+
+# Secrets
+secrets.yaml
