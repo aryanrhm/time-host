@@ -1,4 +1,4 @@
-# Use the official Django base image as the base image
+# Use the alpine image as the base image
 FROM alpine:3.18.2
 
 # Install Python and pip
