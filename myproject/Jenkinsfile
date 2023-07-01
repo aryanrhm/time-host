@@ -1,0 +1,38 @@
+
+def commit_id
+pipeline {
+    agent any
+    stages {
+       stage('preparation') {
+            steps {
+                script {
+                    checkout scm
+                    sh "git rev-parse --short HEAD > .git/commit-id"
+                    commit_id = readFile('.git/commit-id').trim()
+                }
+            }
+        }
+        stage('Test') {
+            agent {
+                docker { 
+                    image 'python:3.12.0b3-bullseye'
+                    args '-u root:root'
+                }
+            }
+            steps {
+                sh 'pip install -r requirements.txt'
+                sh 'python3 manage.py test'
+            }
+       }
+        stage('Build & Push') {
+            steps {
+                script {
+                    docker.withRegistry('', 'docker-hub-token') {
+                    def app = docker.build("aryanrhm/time_host:${commit_id}", '.').push()
+                    }   
+                }
+            }
+       }
+    }
+}
+
