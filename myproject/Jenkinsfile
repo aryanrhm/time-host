@@ -29,9 +29,11 @@ pipeline {
         stage('Build & Push') {
             steps {
                 script {
-                    docker.withRegistry('', 'docker-hub-token') {
-                    def app = docker.build("aryanrhm/time_host:${commit_id}", '.').push()
-                    }   
+                    dir('myproject') {
+                        docker.withRegistry('', 'docker-hub-token') {
+                            def app = docker.build("aryanrhm/time_host:${commit_id}", '.').push()
+                        }
+                    }
                 }
             }
        }
