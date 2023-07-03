@@ -95,8 +95,13 @@ time="2023-07-01T02:09:17Z" level=info msg="Processing results: applications=1 i
 ```
 
 
-And the result of HTTP Get request to the application:
+And the result of HTTP Get request to the application service (NodePort):
 ```
 curl 127.0.0.1:30001
 {"timestamp": "2023-07-01 02:30:26", "hostname": "time-host-deployment-7d5d7f55c4-sfb9t"}
+```
+And the result of HTTP Get request to the application ingress:
+```
+curl -H "Host: time-host.com" http://localhost:30001
+{"timestamp": "2023-07-03 14:03:24", "hostname": "time-host-deployment-d5b9868dc-z78vx"}
 ```
