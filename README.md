@@ -6,7 +6,7 @@ This repository creates a simple Django app that responds to an HTTP GET request
 Then with the help of Docker, Jenkins, Helm Chart, and ArgoCD Image Updater creates a CICD pipeline on a Kubernetes cluster which is deployed with the use of Kind cluster. At the end there would be an application in time-host namespace with its deployment, service, and ingress installed.
 
 >Notes: 
->To decrease the size of image, the alpine is used as the base image.
+>To decrease the size of image, the alpine image is used as the base image.
 >With the use of django-promethus, the metrics of the service could be scraped at the 8000 port and /metrics path. We can collect these metrics by Prometheus server. 
 
 ### Prerequisites
@@ -27,7 +27,7 @@ Then you can create the Kind cluster with the following command:
 ```
 kind create cluster --config kind-config.yaml
 ```
-You can find kind-config.yaml in the kubernetes directory. It is configured to bind a port (30001) on the host to a port (30001) on the Kind containers to define NodePort services inside the Kind cluster and can use them on the host network. 
+You can find [kind-config.yaml](kubernetes/kind-config.yaml) in the kubernetes directory. It is configured to bind a port (30001) on the host to a port (30001) on the Kind containers to define NodePort services inside the Kind cluster and can use them on the host network. 
 
 Now we can install nginx ingress for the cluster:
 ```
@@ -43,22 +43,26 @@ Then forward the port of ArgoCD service to access its GUI:
 kubectl port-forward svc/argocd-server -n argocd 30002:8080 --address 0.0.0.0
 ```
 
-Now we can add the IP of the jenkins-server to Ansible inventory file and add the Docker Hub credentials to the secrets.yml file like this:
+Now we can add the IP of the jenkins-server to Ansible [inventory](ansible/inventory) file and add the Docker Hub credentials to the ansible/secrets.yml file like this:
 ```
 DOCKER_HUB_TOKEN: XXXX
 DOCKER_HUB_USER: XXXX
 ```
 
 And run the Ansible Playbook to install Jenkins on the jenkins-server, configure the JCasC on it, and have the time-host pipeline on the Jenkins server ready to run. Actually, we do not need to configure the Jenkins through its GUI and the pipeline is read from the Jenkinsfile in the myproject path.
-Because the Jenkins Server does not have a Public IP, we cannot add the GitHub Hook to trigger the pipeline after the commits in GitHub. So we can use the Poll SCM option of the Jenkins to check the commits on the GitHub repository every 10 minutes.
+```
+cd ansible
+ansible-playbook -i inventory playbook.yaml 
+```
+Because the Jenkins Server does not have a Public IP, we cannot add the GitHub Webhook to trigger the pipeline after the commits in GitHub. So we can use the Poll SCM option of the Jenkins to check the commits on the GitHub repository every 10 minutes.
 
 ---
 
 Now the pipeline which has 3 stages can run. In the first stage (preparation) the Commit ID would be obtained to use in the tag of the Image, second the test would run, and finally the docker image would be created and pushed to the Docker Hub.
 Now the image is updated, so the application deployment should be updated with the new image.
 We can use the ArgoCD Image Updater, which checks the Docker Hub for the changes of the image, and updates the git repository with the new image (or tag).
-In this repo we use a helm chart named base-chart to create the ArgoCD application with that. The configuration of this application is kubernetes/argocd/time-host-app.yaml which should be applied in your Kubernetes Cluster.
-This file will configure the time-host-app and also the Image Updater for this app. To use the Image Updater we should add a secret for our GitHub repository and a Secret for the Docker Hub. An example secret file for the GitHub is in kubernetes/argocd/git-secret.yaml path and the username and password fields should be filled with your GitHub User Name and your Personal Access Tokens. The secret for Docker Registry could be created like this:
+In this repo we use a helm chart named base-chart to create the ArgoCD application with that. The configuration of this application is [time-host-app](kubernetes/argocd/time-host-app.yaml) which should be applied in your Kubernetes Cluster.
+This file will configure the time-host-app and also the Image Updater for this app. To use the Image Updater we should add a secret for our GitHub repository and a Secret for the Docker Hub. An example secret file for the GitHub is [git-secret](kubernetes/argocd/git-secret.yaml) and the username and password fields should be filled with your GitHub User Name and your Personal Access Tokens. The secret for Docker Registry could be created like this:
 ```
 kubectl -n argocd create secret docker-registry docker-hub-secret \
     --docker-server=registry-1.docker.io \
