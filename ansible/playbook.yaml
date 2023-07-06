@@ -6,7 +6,7 @@
   vars_files:
     - ./secrets.yaml
   roles:
-    # - docker
-    #- git
-    #- jenkins
+    - docker
+    - git
+    - jenkins
     - jcasc
