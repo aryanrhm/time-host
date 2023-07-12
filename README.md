@@ -40,7 +40,7 @@ kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/st
 ```
 Then forward the port of ArgoCD service to access its GUI:
 ```
-kubectl port-forward svc/argocd-server -n argocd 30002:8080 --address 0.0.0.0
+kubectl port-forward svc/argocd-server -n argocd 30002:80 --address 0.0.0.0
 ```
 
 Now we can add the IP of the jenkins-server to Ansible [inventory](ansible/inventory) file and add the Docker Hub credentials to the ansible/secrets.yml file like this:
