@@ -4,8 +4,8 @@ metadata:
   name: {{ .Release.Name }}-ingress
   namespace: {{ .Release.Name }}
   annotations:
-    kubernetes.io/ingress.class: ingress-nginx
 spec:
+  ingressClassName: nginx
   rules:
     - host: {{ .Values.ingress.host }}
       http:
