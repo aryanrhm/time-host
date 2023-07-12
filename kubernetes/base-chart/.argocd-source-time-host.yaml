@@ -4,5 +4,5 @@ helm:
     value: registry-1.docker.io/aryanrhm/time_host
     forcestring: true
   - name: image.tag
-    value: 629956a
+    value: c3206ef
     forcestring: true
