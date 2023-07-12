@@ -109,3 +109,7 @@ And the result of HTTP Get request to the application ingress:
 curl -H "Host: time-host.com" http://localhost:30010
 {"timestamp": "2023-07-03 14:03:24", "hostname": "time-host-deployment-d5b9868dc-z78vx"}
 ```
+The diagram of the pipeline would be like this: 
+
+![image](https://github.com/aryanrhm/time-host/assets/84747328/261513e9-1664-4ab7-aeff-d1ddc190d510)
+
