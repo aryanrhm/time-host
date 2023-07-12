@@ -29,9 +29,13 @@ kind create cluster --config kind-config.yaml
 ```
 You can find [kind-config.yaml](kubernetes/kind-config.yaml) in the kubernetes directory. It is configured to bind a port (30001) on the host to a port (30001) on the Kind containers to define NodePort services inside the Kind cluster and can use them on the host network. 
 
-Now we can install nginx ingress for the cluster:
+Now we can install nginx ingress for the cluster(baremetal):
 ```
-skubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.44.0/deploy/static/provider/cloud/deploy.yaml
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.8.1/deploy/static/provider/baremetal/deploy.yaml
+```
+Then patch the ingress service and change the NodePort:
+```
+kubectl patch svc ingress-nginx-controller -n ingress-nginx  --type='json' -p='[{"op": "replace", "path":"/spec/ports/0/nodePort", "value":30010}]'
 ```
 Then install ArgoCD to handle the CD part of our CICD pipeline.
 ```
@@ -102,6 +106,6 @@ curl 127.0.0.1:30001
 ```
 And the result of HTTP Get request to the application ingress:
 ```
-curl -H "Host: time-host.com" http://localhost:30001
+curl -H "Host: time-host.com" http://localhost:30010
 {"timestamp": "2023-07-03 14:03:24", "hostname": "time-host-deployment-d5b9868dc-z78vx"}
 ```
